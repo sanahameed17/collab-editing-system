@@ -1,0 +1,7 @@
+com\collab\document_service\config\OpenApiConfig.class
+com\collab\document_service\model\Document.class
+com\collab\document_service\controller\DocumentController.class
+com\collab\document_service\DocumentServiceApplication.class
+com\collab\document_service\config\RestTemplateConfig.class
+com\collab\document_service\service\DocumentService.class
+com\collab\document_service\repository\DocumentRepository.class
