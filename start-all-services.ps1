@@ -51,5 +51,5 @@ Write-Host "  - User Service:       http://localhost:8081/swagger-ui.html" -Fore
 Write-Host "  - Document Service:  http://localhost:8082/swagger-ui.html" -ForegroundColor White
 Write-Host "  - Version Service:   http://localhost:8083/swagger-ui.html" -ForegroundColor White
 Write-Host "  - Collaboration:      http://localhost:8084/swagger-ui.html" -ForegroundColor White
-Write-Host "========================================" -ForegroundColor Green
+Write-Host "========================================" -ForegroundColor Green "
 
