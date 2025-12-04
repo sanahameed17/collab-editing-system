@@ -1,41 +1,95 @@
-# Step-by-Step Guide to Run and Test the Project
+# Collaborative Editing System
 
-## Prerequisites Check
+A microservice-based collaborative editing system similar to Google Docs, built with Spring Boot. This system enables multiple users to collaborate on documents in real-time with version control capabilities.
 
-First, verify you have the required tools:
+## Architecture
+
+The system consists of **five microservices** and a modern web frontend:
+
+### Backend Microservices:
+
+1. **User Management Service** (Port 8081)
+   - User registration
+   - User authentication
+   - User profile management
+   - Get all users
+
+2. **Document Editing Service** (Port 8082)
+   - Create new documents
+   - Edit existing documents collaboratively
+   - Real-time change tracking via Server-Sent Events (SSE)
+   - Document CRUD operations
+
+3. **Version Control Service** (Port 8083)
+   - Maintain version history of documents
+   - Revert to previous document versions
+   - Track user contributions
+   - Version management
+
+4. **Collaboration Service** (Port 8084)
+   - WebSocket-based real-time collaboration
+   - Document sharing functionality
+   - Real-time document synchronization
+   - STOMP messaging protocol
+
+5. **API Gateway** (Port 8080)
+   - Single entry point for all microservices
+   - Routes requests to appropriate services
+   - CORS configuration
+   - Request forwarding
+
+### Frontend:
+6. **Web UI** (Port 3000)
+   - Modern, Google Docs-like interface
+   - Real-time collaboration
+   - User authentication
+   - Version history viewer
+   - User management interface
+   - Admin panel with database visualization
+
+## Technology Stack
+
+- **Java 17**
+- **Spring Boot 3.5.8**
+- **Spring Cloud Gateway** (API Gateway)
+- **Spring WebSocket** (Real-time collaboration)
+- **Spring Data JPA** (Data persistence)
+- **H2 Database** (In-memory database for development)
+- **JUnit 5** (Testing framework)
+- **Maven** (Build tool)
+- **SpringDoc OpenAPI (Swagger)** (API documentation)
+- **SockJS & STOMP** (WebSocket client libraries)
+
+## Prerequisites
+
+- Java 17 or higher
+- Maven 3.6+ (or use Maven Wrapper included in each service)
+- Python/Node.js/PHP (for frontend server - optional)
+
+## Quick Start
+
+### 1. Start All Backend Services
 
 ```powershell
-# Check Java version (should be 17 or higher)
-java -version
-
-# Check if ports are available
-netstat -ano | findstr :8080
-netstat -ano | findstr :8081
-netstat -ano | findstr :8082
-netstat -ano | findstr :8083
-```
-
-If ports are in use, stop the processes or change ports in `application.properties` files.
-
----
-
-## Step 1: Start Backend Services
-
-### Option A: Using the Startup Script (Recommended)
-
-Open PowerShell in the project root directory:
-
-```powershell
-# Navigate to project root
 cd D:\collab-editing-system
-
-# Run the startup script
 .\start-all-services.ps1
 ```
 
-This will open 4 separate PowerShell windows, one for each service.
+This will start all 5 services in separate windows. Wait 30-60 seconds for them to start.
 
-### Option B: Manual Start (4 Separate Terminals)
+### 2. Start Frontend
+
+```powershell
+.\start-frontend.ps1
+```
+
+### 3. Open Application
+
+Navigate to: `http://localhost:3000`
+
+## Detailed Setup Instructions
+
+### Starting Services Manually
 
 **Terminal 1 - User Service:**
 ```powershell
@@ -55,270 +109,296 @@ cd D:\collab-editing-system\document-service
 .\mvnw.cmd spring-boot:run
 ```
 
-**Terminal 4 - API Gateway:**
+**Terminal 4 - Collaboration Service:**
+```powershell
+cd D:\collab-editing-system\collaboration-service
+# If mvnw.cmd exists:
+.\mvnw.cmd spring-boot:run
+# Otherwise:
+mvn spring-boot:run
+```
+
+**Terminal 5 - API Gateway:**
 ```powershell
 cd D:\collab-editing-system\api-gateway
 .\mvnw.cmd spring-boot:run
 ```
 
----
-
-## Step 2: Wait for Services to Start
-
-Wait approximately 30-60 seconds for all services to fully start. You'll know they're ready when you see:
-
-```
-Started UserServiceApplication in X.XXX seconds
-Started VersionServiceApplication in X.XXX seconds
-Started DocumentServiceApplication in X.XXX seconds
-Started ApiGatewayApplication in X.XXX seconds
-```
-
----
-
-## Step 3: Verify Services are Running
-
-Open a new PowerShell window and run:
+### Starting Frontend
 
 ```powershell
-# Check if all ports are listening
-netstat -ano | findstr :8080
-netstat -ano | findstr :8081
-netstat -ano | findstr :8082
-netstat -ano | findstr :8083
-```
-
-Or use the test script:
-
-```powershell
-cd D:\collab-editing-system
-.\test-services.ps1
-```
-
----
-
-## Step 4: Start the Frontend
-
-Open a new PowerShell window:
-
-```powershell
-# Navigate to project root
-cd D:\collab-editing-system
-
-# Option A: Use the startup script
-.\start-frontend.ps1
-
-# Option B: Manual start (choose one method)
-# Method 1: Python
-cd frontend
+cd D:\collab-editing-system\frontend
 python -m http.server 3000
-
-# Method 2: Node.js (if http-server is installed)
-cd frontend
-npx http-server -p 3000
-
-# Method 3: PHP
-cd frontend
-php -S localhost:3000
+# Or: npx http-server -p 3000
+# Or: php -S localhost:3000
 ```
 
----
+## Service URLs
 
-## Step 5: Access the Application
+| Service | Port | Direct URL | Via Gateway |
+|---------|------|------------|-------------|
+| API Gateway | 8080 | http://localhost:8080 | - |
+| User Service | 8081 | http://localhost:8081 | http://localhost:8080/api/users |
+| Document Service | 8082 | http://localhost:8082 | http://localhost:8080/api/documents |
+| Version Service | 8083 | http://localhost:8083 | http://localhost:8080/api/versions |
+| Collaboration Service | 8084 | http://localhost:8084 | - |
+| Frontend | 3000 | http://localhost:3000 | - |
 
-### Web UI
-Open your browser and navigate to:
-```
-http://localhost:3000
-```
+## API Endpoints
 
-### Swagger UI (API Documentation)
-- User Service: `http://localhost:8081/swagger-ui.html`
-- Document Service: `http://localhost:8082/swagger-ui.html`
-- Version Service: `http://localhost:8083/swagger-ui.html`
+### User Service (via Gateway: `/api/users`)
 
-### H2 Database Console
-- User Service: `http://localhost:8081/h2-console`
-  - JDBC URL: `jdbc:h2:mem:userdb`
-  - Username: `sa`
-  - Password: (leave empty)
+- `POST /api/users/register` - Register a new user
+- `POST /api/users/login` - Authenticate user
+- `GET /api/users/{id}` - Get user by ID
+- `GET /api/users` - Get all users
+- `PUT /api/users/{id}` - Update user profile
+- `DELETE /api/users/{id}` - Delete user
 
----
+### Document Service (via Gateway: `/api/documents`)
 
-## Step 6: Test the Application
+- `POST /api/documents` - Create a new document
+- `GET /api/documents` - Get all documents
+- `GET /api/documents/{id}` - Get document by ID
+- `GET /api/documents/owner/{ownerId}` - Get documents by owner
+- `PUT /api/documents/{id}` - Update document
+- `DELETE /api/documents/{id}` - Delete document
+- `GET /api/documents/{documentId}/subscribe` - Subscribe to real-time updates (SSE)
+- `POST /api/documents/{id}/track-change` - Track document changes
 
-### Test 1: User Registration (via Web UI)
-1. Open `http://localhost:3000`
-2. Click "Sign Up" tab
-3. Fill in:
-   - Username: `testuser`
-   - Email: `test@example.com`
-   - Password: `password123`
-4. Check "I agree to Terms..."
-5. Click "Create Account"
-6. Should automatically log you in
+### Version Service (via Gateway: `/api/versions`)
 
-### Test 2: User Login (via Web UI)
-1. If logged out, click "Sign In" tab
-2. Enter:
-   - Email: `test@example.com`
-   - Password: `password123`
-3. Click "Sign In"
-4. Should redirect to editor
+- `POST /api/versions` - Save a new version
+- `GET /api/versions/document/{documentId}` - Get all versions for a document
+- `GET /api/versions/{id}` - Get version by ID
+- `GET /api/versions/document/{documentId}/history` - Get version history
+- `POST /api/versions/revert/{documentId}/{versionId}` - Revert to a specific version
+- `GET /api/versions/document/{documentId}/contributions` - Track user contributions
+- `GET /api/versions/user/{userId}/contributions` - Get contributions by user
 
-### Test 3: Create Document (via Web UI)
-1. After login, you'll see the editor
-2. Type some content in the editor
-3. Change the document title in the top bar
-4. Content saves automatically
+### Collaboration Service (Direct: Port 8084)
 
-### Test 4: API Testing (via PowerShell/curl)
+- `POST /collab/documents/{docId}/share` - Share document with user
+- `GET /collab/shared-with/{userId}` - Get documents shared with user
+- `DELETE /collab/documents/{docId}/share` - Unshare document
+- WebSocket: `ws://localhost:8084/ws` - Real-time collaboration endpoint
 
-**Register a User:**
-```powershell
-curl -X POST http://localhost:8080/api/users/register `
-  -H "Content-Type: application/json" `
-  -d '{\"username\": \"john_doe\", \"email\": \"john@example.com\", \"password\": \"password123\"}'
-```
+## API Documentation (Swagger/OpenAPI)
 
-**Login:**
-```powershell
-curl -X POST http://localhost:8080/api/users/login `
-  -H "Content-Type: application/json" `
-  -d '{\"email\": \"john@example.com\", \"password\": \"password123\"}'
-```
+All services include comprehensive Swagger/OpenAPI documentation. Access the Swagger UI at:
 
-**Create Document:**
-```powershell
-curl -X POST http://localhost:8080/api/documents `
-  -H "Content-Type: application/json" `
-  -d '{\"title\": \"My First Document\", \"content\": \"This is test content\", \"ownerId\": 1}'
-```
+- **User Service**: http://localhost:8081/swagger-ui.html
+- **Document Service**: http://localhost:8082/swagger-ui.html
+- **Version Service**: http://localhost:8083/swagger-ui.html
+- **Collaboration Service**: http://localhost:8084/swagger-ui.html
 
-**Get All Users:**
-```powershell
-curl http://localhost:8080/api/users
-```
+## Testing
 
-**Get Version History:**
-```powershell
-curl http://localhost:8080/api/versions/document/1/history
-```
+### Run All Tests
 
----
-
-## Step 7: Run Tests
-
-### Run All Tests for User Service
+**User Service:**
 ```powershell
 cd D:\collab-editing-system\user-service
 .\mvnw.cmd test
 ```
 
-### Run All Tests for Document Service
+**Document Service:**
 ```powershell
 cd D:\collab-editing-system\document-service
 .\mvnw.cmd test
 ```
 
-### Run All Tests for Version Service
+**Version Service:**
 ```powershell
 cd D:\collab-editing-system\version-service
 .\mvnw.cmd test
 ```
 
----
+**Collaboration Service:**
+```powershell
+cd D:\collab-editing-system\collaboration-service
+# If mvnw.cmd exists:
+.\mvnw.cmd test
+# Otherwise:
+mvn test
+```
 
-## Step 8: Test Real-Time Collaboration
+## Example API Calls
 
-1. Open `http://localhost:3000` in two different browsers (or incognito windows)
-2. Login with different accounts in each
-3. Create or open the same document
-4. Type in one browser - changes should appear in the other browser in real-time
+### Register a User
+```bash
+curl -X POST http://localhost:8080/api/users/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "john_doe",
+    "email": "john@example.com",
+    "password": "password123"
+  }'
+```
 
----
+### Login
+```bash
+curl -X POST http://localhost:8080/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john@example.com",
+    "password": "password123"
+  }'
+```
+
+### Create a Document
+```bash
+curl -X POST http://localhost:8080/api/documents \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "My First Document",
+    "content": "This is the content of my document",
+    "ownerId": 1
+  }'
+```
+
+### Share a Document
+```bash
+curl -X POST "http://localhost:8084/collab/documents/1/share?userId=2&permission=edit"
+```
+
+## Real-Time Collaboration
+
+The system supports real-time collaboration through two mechanisms:
+
+1. **Server-Sent Events (SSE)** - Document Service
+   - Endpoint: `GET /api/documents/{documentId}/subscribe`
+   - Used for document updates
+
+2. **WebSocket (STOMP)** - Collaboration Service
+   - Endpoint: `ws://localhost:8084/ws`
+   - Used for real-time collaborative editing
+   - Subscribe to: `/topic/doc/{documentId}`
+   - Send edits to: `/app/doc/{documentId}/edit`
+
+## Features
+
+### User Management
+- ✅ User registration with email validation
+- ✅ User authentication
+- ✅ User profile management
+- ✅ User listing and management
+
+### Document Editing
+- ✅ Create, read, update, delete documents
+- ✅ Real-time collaborative editing
+- ✅ Automatic saving
+- ✅ Document sharing
+
+### Version Control
+- ✅ Complete version history
+- ✅ Revert to previous versions
+- ✅ Track user contributions
+- ✅ Version comparison
+
+### Collaboration
+- ✅ WebSocket-based real-time sync
+- ✅ Document sharing with permissions
+- ✅ Multi-user editing support
+- ✅ Real-time updates
+
+### Admin Panel
+- ✅ Service status monitoring
+- ✅ Database visualization
+- ✅ Statistics dashboard
+- ✅ User management
+- ✅ Data tables for all entities
+
+## Project Structure
+
+```
+collab-editing-system/
+├── api-gateway/              # API Gateway service
+├── user-service/             # User management service
+├── document-service/         # Document editing service
+├── version-service/          # Version control service
+├── collaboration-service/     # Real-time collaboration service
+├── frontend/                 # Web UI
+├── start-all-services.ps1    # Start all services script
+├── start-frontend.ps1       # Start frontend script
+├── test-services.ps1         # Test services script
+└── README.md                 # This file
+```
+
+## Database Access
+
+### H2 Console Access
+
+- **User Service**: http://localhost:8081/h2-console
+  - JDBC URL: `jdbc:h2:mem:userdb`
+  - Username: `sa`, Password: (empty)
+
+- **Document Service**: http://localhost:8082/h2-console
+  - JDBC URL: `jdbc:h2:mem:docdb`
+  - Username: `sa`, Password: (empty)
+
+- **Version Service**: http://localhost:8083/h2-console
+  - JDBC URL: `jdbc:h2:mem:versiondb`
+  - Username: `sa`, Password: (empty)
+
+- **Collaboration Service**: http://localhost:8084/h2-console
+  - JDBC URL: `jdbc:h2:file:./data/collabdb`
+  - Username: `sa`, Password: (empty)
 
 ## Troubleshooting
 
 ### Services Won't Start
-```powershell
-# Check if Java is installed
-java -version
+- Check Java version: `java -version` (should be 17+)
+- Check if ports are in use: `netstat -ano | findstr :8080`
+- Kill processes if needed: `taskkill /PID <PID> /F`
 
-# Check if ports are in use
-netstat -ano | findstr :8081
+### Connection Errors
+- Ensure all services are running
+- Check Admin Panel → Service Status
+- Verify API Gateway is running
+- Check browser console for specific errors
 
-# Kill process using port (replace PID with actual process ID)
-taskkill /PID <PID> /F
-```
+### Frontend Issues
+- Ensure accessing via `http://localhost:3000` (not `file://`)
+- Check CORS configuration
+- Verify all backend services are running
 
-### Frontend Won't Load
-```powershell
-# Check if frontend server is running
-netstat -ano | findstr :3000
+See `TROUBLESHOOTING.md` for more details.
 
-# Try a different port
-python -m http.server 3001
-```
+## Testing Checklist
 
-### API Errors
-- Ensure all 4 backend services are running
-- Check API Gateway is running on port 8080
-- Verify services are accessible:
-  ```powershell
-  curl http://localhost:8081/users
-  curl http://localhost:8082/documents
-  curl http://localhost:8083/versions
-  ```
-
-### CORS Errors
-- Ensure API Gateway is running (it handles CORS)
-- Check browser console for specific error messages
-
----
-
-## Quick Reference: Service URLs
-
-| Service | Direct URL | Via Gateway |
-|---------|-----------|-------------|
-| User Service | http://localhost:8081 | http://localhost:8080/api/users |
-| Document Service | http://localhost:8082 | http://localhost:8080/api/documents |
-| Version Service | http://localhost:8083 | http://localhost:8080/api/versions |
-| Frontend | http://localhost:3000 | - |
-
----
-
-## Stop All Services
-
-To stop all services:
-1. Close all PowerShell windows running the services
-2. Or press `Ctrl+C` in each terminal window
-3. For frontend, press `Ctrl+C` in the frontend terminal
-
----
-
-## Complete Test Flow
-
-1. ✅ Start all 4 backend services
-2. ✅ Wait for services to start (30-60 seconds)
-3. ✅ Start frontend server
-4. ✅ Open browser to `http://localhost:3000`
-5. ✅ Register a new user
-6. ✅ Create a document
-7. ✅ Edit document content
-8. ✅ View version history
-9. ✅ Test real-time collaboration (2 browsers)
-10. ✅ Test API endpoints via Swagger UI
-
----
+- [ ] All 5 backend services start successfully
+- [ ] Frontend loads at http://localhost:3000
+- [ ] Can register new users
+- [ ] Can login with registered users
+- [ ] Can create documents
+- [ ] Can edit documents
+- [ ] Real-time collaboration works (2 browsers)
+- [ ] Version history is maintained
+- [ ] Admin panel shows all data
+- [ ] Swagger UI is accessible
+- [ ] All tests pass
 
 ## Success Indicators
 
 You'll know everything is working when:
-- ✅ All 4 services show "Started" in their terminals
+- ✅ All 5 services show "Started" in their terminals
 - ✅ Frontend loads at `http://localhost:3000`
 - ✅ You can register and login
 - ✅ You can create and edit documents
+- ✅ Real-time collaboration works
+- ✅ Admin panel shows all services as "Online"
 - ✅ Swagger UI is accessible
 - ✅ All tests pass
 
+## License
+
+This project is for educational purposes.
+
+## Support
+
+For issues and questions, refer to:
+- `TROUBLESHOOTING.md` - Common issues and solutions
+- `QUICK_START.md` - Quick reference guide
+- `FIX_CONNECTION_ISSUES.md` - Connection troubleshooting
+- `PROJECT_REQUIREMENTS_CHECKLIST.md` - Requirements verification
