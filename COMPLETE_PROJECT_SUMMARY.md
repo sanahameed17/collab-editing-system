@@ -53,7 +53,22 @@ This collaborative editing system meets and exceeds all project requirements.
 - Contribution tracking per user
 - Timestamp tracking
 
-### 4. API Gateway ✅
+### 4. Collaboration Service ✅
+**Port:** 8084  
+**Operations (4 total):**
+1. ✅ Share Document - `POST /collab/documents/{docId}/share`
+2. ✅ Get Shared Documents - `GET /collab/shared-with/{userId}`
+3. ✅ Unshare Document - `DELETE /collab/documents/{docId}/share`
+4. ✅ WebSocket Real-Time Editing - `ws://localhost:8084/ws`
+
+**Features:**
+- WebSocket-based real-time collaboration
+- STOMP messaging protocol
+- Document sharing with permissions
+- Real-time document synchronization
+- Multi-user editing support
+
+### 5. API Gateway ✅
 **Port:** 8080  
 **Features:**
 - ✅ Single entry point for all services
@@ -66,22 +81,23 @@ This collaborative editing system meets and exceeds all project requirements.
 - `/api/users/**` → User Service (8081)
 - `/api/documents/**` → Document Service (8082)
 - `/api/versions/**` → Version Service (8083)
+- Collaboration Service runs independently on port 8084
 
-### 5. REST APIs ✅
+### 6. REST APIs ✅
 - ✅ All endpoints follow RESTful conventions
 - ✅ Proper HTTP methods (GET, POST, PUT, DELETE)
 - ✅ JSON request/response format
 - ✅ Appropriate HTTP status codes
 - ✅ Resource-based URLs
 
-### 6. Java Implementation ✅
+### 7. Java Implementation ✅
 - ✅ Java 17
 - ✅ Spring Boot 3.5.8
 - ✅ Maven build system
 - ✅ Clean architecture
 - ✅ Proper package structure
 
-### 7. Automatic Tests (JUnit) ✅
+### 8. Automatic Tests (JUnit) ✅
 **Test Coverage:**
 - ✅ **User Service**: 8 unit tests + integration tests
 - ✅ **Document Service**: 7 unit tests
@@ -93,7 +109,7 @@ This collaborative editing system meets and exceeds all project requirements.
 - Repository integration tests (DataJpaTest)
 - Service layer tests
 
-### 8. Swagger/OpenAPI Documentation ✅
+### 9. Swagger/OpenAPI Documentation ✅
 - ✅ SpringDoc OpenAPI integrated
 - ✅ Swagger UI available for all services
 - ✅ Complete API documentation
@@ -104,14 +120,15 @@ This collaborative editing system meets and exceeds all project requirements.
 - User Service: http://localhost:8081/swagger-ui.html
 - Document Service: http://localhost:8082/swagger-ui.html
 - Version Service: http://localhost:8083/swagger-ui.html
+- Collaboration Service: http://localhost:8084/swagger-ui.html
 
-### 9. Inter-Service Communication ✅
+### 10. Inter-Service Communication ✅
 - ✅ Document Service → Version Service integration
 - ✅ Automatic version creation on document updates
 - ✅ RestTemplate for HTTP communication
 - ✅ Error handling and resilience
 
-### 10. Real-Time Collaboration ✅
+### 11. Real-Time Collaboration ✅
 - ✅ Server-Sent Events (SSE) implementation
 - ✅ Real-time document updates
 - ✅ Multi-user collaboration
@@ -128,9 +145,9 @@ This collaborative editing system meets and exceeds all project requirements.
 
 ## Project Statistics
 
-- **Total Operations**: 19 (exceeds minimum of 9)
+- **Total Operations**: 23+ (exceeds minimum of 9)
 - **Total Tests**: 22+ automated tests
-- **Microservices**: 3 + API Gateway
+- **Microservices**: 4 + API Gateway
 - **Code Quality**: Clean, well-documented, follows best practices
 
 ## Quick Start
@@ -144,6 +161,7 @@ This collaborative editing system meets and exceeds all project requirements.
    - User Service: http://localhost:8081/swagger-ui.html
    - Document Service: http://localhost:8082/swagger-ui.html
    - Version Service: http://localhost:8083/swagger-ui.html
+   - Collaboration Service: http://localhost:8084/swagger-ui.html
 
 3. **Use API Gateway:**
    - Base URL: http://localhost:8080/api

@@ -9,10 +9,10 @@
 Open PowerShell and check ports:
 
 ```powershell
-netstat -ano | findstr ":8080 :8081 :8082 :8083"
+netstat -ano | findstr ":8080 :8081 :8082 :8083 :8084"
 ```
 
-You should see all 4 ports listening. If any are missing, start that service.
+You should see all 5 ports listening. If any are missing, start that service.
 
 ## Step 2: Start Services in Correct Order
 
@@ -34,7 +34,16 @@ cd D:\collab-editing-system\document-service
 .\mvnw.cmd spring-boot:run
 ```
 
-**Terminal 4 - API Gateway:**
+**Terminal 4 - Collaboration Service:**
+```powershell
+cd D:\collab-editing-system\collaboration-service
+# If mvnw.cmd exists:
+.\mvnw.cmd spring-boot:run
+# Otherwise:
+mvn spring-boot:run
+```
+
+**Terminal 5 - API Gateway:**
 ```powershell
 cd D:\collab-editing-system\api-gateway
 .\mvnw.cmd spring-boot:run
@@ -42,10 +51,11 @@ cd D:\collab-editing-system\api-gateway
 
 ## Step 3: Wait for Services to Start
 
-Wait 30-60 seconds. Look for these messages in each terminal:
+Wait 60-90 seconds. Look for these messages in each terminal:
 - "Started UserServiceApplication"
 - "Started VersionServiceApplication"
 - "Started DocumentServiceApplication"
+- "Started CollaborationServiceApplication"
 - "Started ApiGatewayApplication"
 
 ## Step 4: Test API Gateway Directly
@@ -58,6 +68,9 @@ curl http://localhost:8080/api/users
 
 # Test User Service directly
 curl http://localhost:8081/users
+
+# Test Collaboration Service
+curl http://localhost:8084/collab/shared-with/1
 ```
 
 ## Step 5: Check Browser Console
@@ -105,11 +118,13 @@ taskkill /PID <PID> /F
 
 ## Verification Checklist
 
-- [ ] All 4 services show "Started" in terminals
-- [ ] Ports 8080, 8081, 8082, 8083 are listening
+- [ ] All 5 services show "Started" in terminals
+- [ ] Ports 8080, 8081, 8082, 8083, 8084 are listening
 - [ ] API Gateway responds: `curl http://localhost:8080/api/users`
 - [ ] User Service responds: `curl http://localhost:8081/users`
+- [ ] Collaboration Service responds: `curl http://localhost:8084/collab/shared-with/1`
 - [ ] Frontend loads at `http://localhost:3000`
+- [ ] WebSocket connection works (check browser console)
 - [ ] Admin Panel shows all services as "Online"
 - [ ] Can register a new user
 - [ ] Can login with registered user

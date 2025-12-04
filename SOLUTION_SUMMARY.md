@@ -32,7 +32,7 @@ cd D:\collab-editing-system
 .\start-all-services.ps1
 ```
 
-Wait 30-60 seconds for all services to start.
+Wait 60-90 seconds for all services to start.
 
 ### Step 2: Start Frontend
 ```powershell
@@ -64,7 +64,12 @@ http://localhost:3000
 ## 📊 Admin Panel Features
 
 ### Service Status
-- Shows real-time status of all 4 services
+- Shows real-time status of all 5 backend services:
+  - API Gateway (Port 8080)
+  - User Service (Port 8081)
+  - Document Service (Port 8082)
+  - Version Service (Port 8083)
+  - Collaboration Service (Port 8084)
 - Green "Online" = Service is running
 - Red "Offline" = Service is not responding
 
@@ -95,11 +100,12 @@ http://localhost:3000
 ## 🔧 Technical Improvements
 
 ### 1. API Gateway Routing Fixed
-- Changed from `StripPrefix=2` to `StripPrefix=1`
+- Simplified routing configuration
 - Now correctly routes:
-  - `/api/users/**` → `http://localhost:8081/users/**`
-  - `/api/documents/**` → `http://localhost:8082/documents/**`
-  - `/api/versions/**` → `http://localhost:8083/versions/**`
+  - `/users/**` → `http://localhost:8081/users/**`
+  - `/documents/**` → `http://localhost:8082/documents/**`
+  - `/versions/**` → `http://localhost:8083/versions/**`
+- Collaboration Service runs independently on port 8084 (WebSocket-based)
 
 ### 2. Fallback Mechanism
 - If API Gateway fails, automatically tries direct service URLs
@@ -118,7 +124,7 @@ http://localhost:3000
 
 ## 🧪 Testing Checklist
 
-- [ ] Start all 4 services
+- [ ] Start all 5 services
 - [ ] Start frontend
 - [ ] Register a new user → Should work
 - [ ] Login with user → Should work
@@ -135,7 +141,7 @@ http://localhost:3000
 
 1. **Check services are running:**
    ```powershell
-   netstat -ano | findstr ":8080 :8081 :8082 :8083"
+   netstat -ano | findstr ":8080 :8081 :8082 :8083 :8084"
    ```
 
 2. **Test API Gateway:**
@@ -143,9 +149,12 @@ http://localhost:3000
    curl http://localhost:8080/api/users
    ```
 
-3. **Test direct service:**
+3. **Test direct services:**
    ```powershell
    curl http://localhost:8081/users
+   curl http://localhost:8082/documents
+   curl http://localhost:8083/versions
+   curl http://localhost:8084/collab/shared-with/1
    ```
 
 4. **Check browser console:**

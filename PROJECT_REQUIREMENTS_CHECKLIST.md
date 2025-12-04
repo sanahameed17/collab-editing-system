@@ -124,11 +124,13 @@
 - User Service: `http://localhost:8081`
 - Document Service: `http://localhost:8082`
 - Version Service: `http://localhost:8083`
+- Collaboration Service: `http://localhost:8084`
 
 ### Swagger UI
 - User Service: `http://localhost:8081/swagger-ui.html`
 - Document Service: `http://localhost:8082/swagger-ui.html`
 - Version Service: `http://localhost:8083/swagger-ui.html`
+- Collaboration Service: `http://localhost:8084/swagger-ui.html`
 
 ### Frontend
 - Web UI: `http://localhost:3000` (when started)
@@ -136,18 +138,25 @@
 ## Testing
 
 Run all tests:
-```bash
+```powershell
 # User Service
-cd user-service/user-service
-./mvnw.cmd test
+cd user-service
+.\mvnw.cmd test
 
 # Document Service
-cd document-service/document-service
-./mvnw.cmd test
+cd document-service
+.\mvnw.cmd test
 
 # Version Service
-cd version-service/version-service
-./mvnw.cmd test
+cd version-service
+.\mvnw.cmd test
+
+# Collaboration Service
+cd collaboration-service
+# If mvnw.cmd exists:
+.\mvnw.cmd test
+# Otherwise:
+mvn test
 ```
 
 All tests should pass successfully.

@@ -4,7 +4,7 @@
 
 ### 1. Port Already in Use
 
-**Error:** `Port 8080/8081/8082/8083 is already in use`
+**Error:** `Port 8080/8081/8082/8083/8084 is already in use`
 
 **Solution:**
 - Check if services are already running: `netstat -ano | findstr :8080`
@@ -37,7 +37,7 @@
 **Solution:**
 - Ensure all backend services are running first
 - Check gateway routes in `application.yml`
-- Verify service URLs are correct (localhost:8081, 8082, 8083)
+- Verify service URLs are correct (localhost:8081, 8082, 8083, 8084)
 - Check CORS configuration
 
 ### 5. Database Connection Issues
@@ -64,7 +64,8 @@
 1. **User Service** (Port 8081)
 2. **Version Service** (Port 8083)
 3. **Document Service** (Port 8082)
-4. **API Gateway** (Port 8080)
+4. **Collaboration Service** (Port 8084)
+5. **API Gateway** (Port 8080)
 
 ## Verifying Services are Running
 
@@ -74,12 +75,16 @@ netstat -ano | findstr :8080
 netstat -ano | findstr :8081
 netstat -ano | findstr :8082
 netstat -ano | findstr :8083
+netstat -ano | findstr :8084
 
 # Test API Gateway
 curl http://localhost:8080/api/users
 
 # Test User Service directly
 curl http://localhost:8081/users
+
+# Test Collaboration Service
+curl http://localhost:8084/collab/shared-with/1
 ```
 
 ## Common Runtime Errors
